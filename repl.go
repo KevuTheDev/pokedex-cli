@@ -10,7 +10,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -25,6 +25,11 @@ func getCommands() map[string]cliCommand {
 			description: "Search",
 			callback:    callbackMap,
 		},
+		"mapb": {
+			name:        "mapb",
+			description: "Search",
+			callback:    callbackMapb,
+		},
 		"help": {
 			name:        "help",
 			description: "Prints the help menu",
@@ -33,7 +38,7 @@ func getCommands() map[string]cliCommand {
 	}
 }
 
-func startRepl() {
+func startRepl(cfg *config) {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
@@ -59,9 +64,12 @@ func startRepl() {
 			continue
 		}
 
-		command.callback()
-		fmt.Println()
+		err := command.callback(cfg)
+		if err != nil {
+			fmt.Println(err)
+		}
 
+		fmt.Println()
 	}
 }
 
